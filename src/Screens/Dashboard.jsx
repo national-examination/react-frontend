@@ -8,12 +8,15 @@ import Account from '../components/Account';
 import welcome from '../assets/welcome.png';
 
 function Dashboard() {
+  const token = localStorage.getItem("token");
+  console.log("Dashboard ",token);
+
   const { isLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     console.log(isLoggedIn)
-    if (!isLoggedIn) navigate("/login")
+    if (!token) navigate("/login")
   })
 
   return (

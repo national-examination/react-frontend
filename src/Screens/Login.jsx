@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from '../Context/AuthContext';
-import login_img from '../assets/login_img.webp'
+import login_img from '../assets/login_img.webp';
 import { FaGoogle, FaFacebook, FaAffiliatetheme } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 import '../index.css'
 
 function Login() {
@@ -13,17 +14,33 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  const loginUrl = 'http://localhost:3000/user/login';
+
   const handleLogin = (e) => {
     e.preventDefault();
 
-    if (email === 'admin@gmail.com' && password === 'admin') {
-      setIsLoggedIn(true);
-      navigate(`/dashboard`);
-    } else {
-      setError();
-      toast.error('Invalid username or password')
-    }
-  };
+    axios.post(loginUrl, { userid: email, password: password })
+      .then(response => {
+        const token = response.data.token;
+        console.log('Token:', token);
+        localStorage.setItem("token", token)
+        setIsLoggedIn(true);
+        navigate(`/dashboard`);
+      })
+      .catch(error => {
+        console.error('Axios error:', error.message);
+        setError();
+        toast.error('Invalid username or password')
+      });
+    };
+    
+    // if (email === 'admin@gmail.com' && password === 'admin') {
+    //   setIsLoggedIn(true);
+    //   navigate(`/dashboard`);
+    // } else {
+    //   setError();
+    //   toast.error('Invalid username or password')
+    // }
 
   return (
     <div className='bg-white shadow-sm  align-center justify-center p-3'>
@@ -34,7 +51,7 @@ function Login() {
         <div className="w-1/2 p-4 items-center">
           <div className="flex items-center justify-center">
             <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mr-4">
-              <FaAffiliatetheme size={35} className="text-red-400"/>
+              <FaAffiliatetheme size={35} className="text-red-400" />
             </div>
           </div>
           <h1 className="font-semibold text-2xl text-center mt-5">Hello again!</h1>
